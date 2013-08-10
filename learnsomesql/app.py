@@ -10,8 +10,9 @@ def create_app(lessons):
     )
 
     @app.route("/")
-    def hello():
-        return "Hello World!"
+    def index():
+        return flask.redirect(flask.url_for("lesson", lesson_slug=lessons[0].slug))
+    
     
     def _find_lesson_index(slug):
         for index, lesson in enumerate(lessons):

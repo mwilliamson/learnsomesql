@@ -3,6 +3,15 @@ from nose.tools import istest, assert_equal, assert_in, assert_not_in
 from learnsomesql.app import create_app, Lesson
 
 
+
+@istest
+def root_page_redirects_to_first_lesson():
+    client = _create_client()
+    response = client.get("/")
+    assert_equal(302, response.status_code)
+    assert_equal("http://localhost/lesson/simple-selects", response.headers["location"])
+    
+
 @istest
 def lesson_slug_is_used_to_find_lesson():
     client = _create_client()
