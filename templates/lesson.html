@@ -2,6 +2,44 @@
 
 {% block content %}
   <div class="row-fluid">
-    <h2>{{lesson.name}}</h2>
+    <h2>{{ lesson.title }}</h2>
+    <div class="lesson-description">
+      {{ lesson.description|safe }}
+    </div>
   </div>
+  {% if next_lesson %}
+    <div class="row-fluid">
+      <div class="span12">
+        <div class="well">
+          <h2>Next lesson: {{ next_lesson.title }}</h2>
+          <p>Once you think you've nailed this lesson, feel free to go to the next lesson.</p>
+          <a class="btn btn-success" href="{{ next_lesson.url }}">Next lesson</a>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+  <div class="row-fluid">
+    <div class="span6">
+      <div class="well" id="all-lessons">
+        <h2>All lessons</h2>
+        <ul>
+          {% for other_lesson in all_lessons %}
+            <li><a href="{{ other_lesson.url }}">{{ other_lesson.title }}</a></li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+    
+    <div class="span6">
+      <div class="well">
+        <h2>Questions? Suggestions?</h2>
+        
+        <p>
+          We'd love to hear any feedback you have for us.
+          Just send an email to <a href="mailto:hello@learnsomesql.com">hello@learnsomesql.com</a>.
+        </p>
+      </div>
+    </div>
+  </div>
+
 {% endblock %}
