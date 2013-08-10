@@ -13,13 +13,31 @@ def create_app():
     def hello():
         return "Hello World!"
 
-
-    @app.route("/lesson")
-    def lesson():
-        return flask.render_template("lesson.html")
+    
+    lessons = [
+        Lesson("simple-selects", "Simple SELECTs"),
+        Lesson("select-star", "SELECT *"),
+    ]
+    
+    def _find_lesson(slug):
+        for lesson in lessons:
+            if lesson.slug == slug:
+                return lesson
+        
+    
+    @app.route("/lesson/<lesson_slug>")
+    def lesson(lesson_slug):
+        lesson = _find_lesson(lesson_slug)
+        return flask.render_template("lesson.html", lesson=lesson)
         
     return app
     
+
+class Lesson(object):
+    def __init__(self, slug, name):
+        self.slug = slug
+        self.name = name
+
     
 def _package_path(path):
     return os.path.abspath(os.path.join(os.path.dirname(__file__), "..", path))
