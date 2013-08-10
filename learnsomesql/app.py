@@ -1,8 +1,14 @@
-import flask
 import os
+import contextlib
+
+import flask
+import sqlexecutor
 
 
-def create_app(lessons):
+@contextlib.contextmanager
+def create_app(course):
+    lessons = course.lessons
+    
     app = flask.Flask(
         "learnsomesql",
         template_folder=_package_path("templates"),
@@ -42,9 +48,41 @@ def create_app(lessons):
                 next_lesson=next_lesson,
                 all_lessons=all_lessons,
             )
-        
-    return app
     
+    @app.route("/query", methods=["POST"])
+    def query():
+        query = flask.request.form["query"]
+        result = executor.execute(course.creation_sql, query)
+        
+        response = {
+            "query": query
+        }
+        
+        if result.error:
+            response["error"] = result.error
+            
+        if result.table:
+            response["table"] = {
+                "columnNames": result.table.column_names,
+                "rows": result.table.rows
+            }
+        
+        return flask.jsonify(response)
+    
+    sqlexecutor.prepare("sqlite3", None)
+    
+    executor = sqlexecutor.executor("sqlite3", None)
+    try:
+        yield app
+    finally:
+        executor.close()
+
+
+class Course(object):
+    def __init__(self, creation_sql, lessons):
+        self.creation_sql = creation_sql
+        self.lessons = lessons
+
 
 class Lesson(object):
     def __init__(self, slug, title, description):
@@ -69,5 +107,7 @@ if __name__ == "__main__":
         Lesson("simple-selects", "Simple SELECTs", "<p>SELECTs are simple</p>"),
         Lesson("select-star", "SELECT *", "<p>Don't use SELECT * in code</p>"),
     ]
-    create_app(sample_lessons).run(debug=True)
+    sample_course = Course([], sample_lessons)
+    with create_app(sample_course) as app:
+        app.run(debug=True)
 
