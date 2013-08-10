@@ -1,0 +1,38 @@
+﻿html {
+    overflow-y: scroll;
+}
+
+textarea.query-input {
+    width: 90%;
+    height: 100px;
+    font-family: Monaco, Menlo, Consolas, "Courier New", monospace;
+}
+
+body {
+    padding-bottom: 20em;
+}
+
+.navbar-inverse .brand {
+    color: #fff;
+}
+
+.navbar-inverse .nav > li > a {
+    color: #ddd;
+}
+
+.red-gate-logo {
+    float: right;
+    margin-top: 8px;
+}
+
+.lesson-description p {
+    line-height: 1.6;
+}
+
+.lesson-description p, .lesson-description pre {
+    max-width: 50em;
+}
+
+.lesson-description .table {
+    width: auto;
+}

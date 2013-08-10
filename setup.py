@@ -15,6 +15,7 @@ setup(
     url='http://github.com/mwilliamson/learnsomesql',
     packages=['learnsomesql'],
     install_requires=[
+        "Flask<=0.10.1,<0.11",
         "sqlexecutor>=0.1.0,<0.2",
     ],
     license='BSD 2-Clause',
