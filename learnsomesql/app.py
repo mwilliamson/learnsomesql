@@ -41,14 +41,14 @@ def create_app(course):
             
             if lesson_index + 1 < len(all_lessons):
                 next_lesson = all_lessons[lesson_index + 1]
-                next_lesson_json = {title: next_lesson.title, url: next_lesson.url}
+                next_lesson_json = {"title": next_lesson.title, "url": next_lesson.url}
             else:
                 next_lesson = None
                 next_lesson_json = None
             
             question_json = json.dumps({
                 "questions": map(question_to_json, lesson.questions),
-                "next_lesson": next_lesson_json
+                "nextLesson": next_lesson_json
             })
             
             return flask.render_template(
@@ -162,7 +162,7 @@ if __name__ == "__main__":
             correct_answer="SELECT color FROM cars",
             expected_results=ResultTable(
                 ["color"],
-                [["Green"], ["Red"]],
+                [["red"], ["green"]],
             ),
         ),
     ]
