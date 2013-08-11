@@ -42,7 +42,7 @@ class LessonsReader(object):
     def _read_lesson_element(self, lesson_element):
         slug = _text(_find(lesson_element, "slug"))
         title = _text(_find(lesson_element, "title"))
-        description = _text(_find(lesson_element, "description"))
+        description = _inner_xml(_find(lesson_element, "description"))
         
         questions_element = _find(lesson_element, "questions")
         questions = map(

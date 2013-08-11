@@ -73,7 +73,7 @@ def lesson_has_slug_and_title_and_description():
                 <lesson>
                     <slug>simple-selects</slug>
                     <title>Simple SELECTs</title>
-                    <description>SELECTs are the simplest SQL statement.</description>
+                    <description><p>SELECTs are the simplest SQL statement.</p></description>
                 </lesson>
             </lessons>
         </course>"""
@@ -83,7 +83,7 @@ def lesson_has_slug_and_title_and_description():
     lesson = course.lessons[0]
     assert_equal("simple-selects", lesson.slug)
     assert_equal("Simple SELECTs", lesson.title)
-    assert_equal("SELECTs are the simplest SQL statement.", lesson.description)
+    assert_equal("<p>SELECTs are the simplest SQL statement.</p>", lesson.description)
 
 
 @istest
