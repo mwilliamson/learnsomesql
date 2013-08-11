@@ -1,8 +1,10 @@
 import os
 import contextlib
+import json
 
 import flask
 import sqlexecutor
+from sqlexecutor.results import ResultTable
 
 
 @contextlib.contextmanager
@@ -39,15 +41,33 @@ def create_app(course):
             
             if lesson_index + 1 < len(all_lessons):
                 next_lesson = all_lessons[lesson_index + 1]
+                next_lesson_json = {title: next_lesson.title, url: next_lesson.url}
             else:
                 next_lesson = None
+                next_lesson_json = None
+            
+            question_json = json.dumps({
+                "questions": map(question_to_json, lesson.questions),
+                "next_lesson": next_lesson_json
+            })
             
             return flask.render_template(
                 "lesson.html",
                 lesson=lesson,
                 next_lesson=next_lesson,
                 all_lessons=all_lessons,
+                question_json=question_json,
             )
+            
+    def question_to_json(question):
+        return {
+            "description": question.description,
+            "correctAnswer": question.correct_answer,
+            "expectedResults": {
+                "columnNames": question.expected_results.column_names,
+                "rows": question.expected_results.rows
+            }
+        }
     
     @app.route("/query", methods=["POST"])
     def query():
@@ -85,17 +105,26 @@ class Course(object):
 
 
 class Lesson(object):
-    def __init__(self, slug, title, description):
+    def __init__(self, slug, title, description, questions):
         self.slug = slug
         self.title = title
         self.description = description
-        
+        self.questions = questions
+
+
+class Question(object):
+    def __init__(self, description, correct_answer, expected_results):
+        self.description = description
+        self.correct_answer = correct_answer
+        self.expected_results = expected_results
+
 
 class LessonViewModel(object):
     def __init__(self, lesson):
         self.title = lesson.title
         self.url = flask.url_for("lesson", lesson_slug=lesson.slug)
         self.description = lesson.description
+        self.questions = lesson.questions
 
     
 def _package_path(path):
@@ -103,11 +132,46 @@ def _package_path(path):
 
 
 if __name__ == "__main__":
-    sample_lessons = [
-        Lesson("simple-selects", "Simple SELECTs", "<p>SELECTs are simple</p>"),
-        Lesson("select-star", "SELECT *", "<p>Don't use SELECT * in code</p>"),
+    creation_sql = [
+     """CREATE TABLE cars (
+      id int primary key,
+      licensePlate text UNIQUE NOT NULL,
+      manufacturer text NOT NULL,
+      model text NOT NULL,
+      color text NOT NULL,
+      mileage int NOT NULL,
+      brakeHorsepower int NOT NULL
+    )""",
+    
+    "INSERT INTO cars (licensePlate, manufacturer, model, color, mileage, brakeHorsepower) VALUES ('X461 TOM', 'Skoda', 'Fabia', 'red', 64000, 129)",
+    
+    "INSERT INTO cars (licensePlate, manufacturer, model, color, mileage, brakeHorsepower) VALUES ('FA10 ASM', 'Volkswagen', 'Fox', 'green', 15000, 135)",
     ]
-    sample_course = Course([], sample_lessons)
+    
+    questions = [
+        Question(
+            description="<p>Get the model of every car in the <code>cars</code> table.</p>",
+            correct_answer="SELECT model FROM cars",
+            expected_results=ResultTable(
+                ["model"],
+                [["Fabia"], ["Fox"]],
+            ),
+        ),
+        Question(
+            description="<p>Get the color of every car.</p>",
+            correct_answer="SELECT color FROM cars",
+            expected_results=ResultTable(
+                ["color"],
+                [["Green"], ["Red"]],
+            ),
+        ),
+    ]
+    
+    sample_lessons = [
+        Lesson("simple-selects", "Simple SELECTs", "<p>SELECTs are simple</p>", questions),
+        Lesson("select-star", "SELECT *", "<p>Don't use SELECT * in code</p>", questions),
+    ]
+    sample_course = Course(creation_sql, sample_lessons)
     with create_app(sample_course) as app:
         app.run(debug=True)
 

@@ -7,6 +7,10 @@
       {{ lesson.description|safe }}
     </div>
   </div>
+  
+  <div id="question" class="row-fluid">
+  </div>
+  
   {% if next_lesson %}
     <div class="row-fluid">
       <div class="span12">
@@ -41,5 +45,8 @@
       </div>
     </div>
   </div>
+  <input type="hidden" id="question-json" value="{{ question_json }}" />
+  <script src="/static/learnsomesql.js"></script>
+  <script src="/static/main.js"></script>
 
 {% endblock %}
