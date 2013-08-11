@@ -1,0 +1,527 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<course>
+  <creation-sql>
+    <dialect name="sqlite3">
+      CREATE TABLE cars (
+        id int primary key,
+        licensePlate text UNIQUE NOT NULL,
+        manufacturer text NOT NULL,
+        model text NOT NULL,
+        color text NOT NULL,
+        mileage int NOT NULL,
+        brakeHorsepower int NOT NULL
+      )
+    </dialect>
+    <dialect name="mssql">
+      CREATE TABLE dbo.cars (
+        id int IDENTITY NOT NULL,
+        licensePlate nvarchar(20) UNIQUE NOT NULL,
+        manufacturer nvarchar(max) NOT NULL,
+        model nvarchar(max) NOT NULL,
+        color nvarchar(20) NOT NULL,
+        mileage int NOT NULL,
+        brakeHorsepower int NOT NULL,
+      )
+    </dialect>
+    
+    INSERT INTO cars (licensePlate, manufacturer, model, color, mileage, brakeHorsepower) VALUES ('X461 TOM', 'Skoda', 'Fabia', 'red', 64000, 129)
+    
+    INSERT INTO cars (licensePlate, manufacturer, model, color, mileage, brakeHorsepower) VALUES ('FA10 ASM', 'Volkswagen', 'Fox', 'black', 15000, 135)
+    
+    INSERT INTO cars (licensePlate, manufacturer, model, color, mileage, brakeHorsepower) VALUES ('L486 CMA', 'Ford', 'Mondeo', 'purple', 123000, 146)
+    
+    INSERT INTO cars (licensePlate, manufacturer, model, color, mileage, brakeHorsepower) VALUES ('B728 ACL', 'Datsun', 'Cherry', 'green', 700, 747)
+    
+    <dialect name="sqlite3">
+      CREATE TABLE owners (
+        id int primary key,
+        name text NOT NULL,
+        dateOfBirth text NOT NULL,
+        contactNumber text NOT NULL,
+        city text NOT NULL
+      )
+    </dialect>
+    <dialect name="mssql">
+      CREATE TABLE dbo.owners (
+        id int IDENTITY NOT NULL,
+        name varchar(max) NOT NULL,
+        dateOfBirth date NOT NULL,
+        contactNumber varchar(20) NOT NULL,
+        city varchar(255) NOT NULL
+      )
+    </dialect>
+    
+    INSERT INTO owners (name, dateOfBirth, contactNumber, city) VALUES ('Alison Smith', '1985-05-22', '01632 487854', 'Saffron Walden')
+    
+    INSERT INTO owners (name, dateOfBirth, contactNumber, city) VALUES ('Tom Bussell', '1986-04-12', '01632 157234', 'Cambridge')
+    
+    INSERT INTO owners (name, dateOfBirth, contactNumber, city) VALUES ('Chris Masters', '1985-02-22', '01632 187251', 'Trumpington')
+    
+    INSERT INTO owners (name, dateOfBirth, contactNumber, city) VALUES ('Andy Jones', '1885-06-12', '01632 952554', 'Sudbury')
+    
+    INSERT INTO owners (name, dateOfBirth, contactNumber, city) VALUES ('Helena Farry', '1986-10-14', '01632 558967', 'Cambridge')
+  </creation-sql>
+  <lessons>
+    <!--
+    <lesson>
+      <title>Welcome to Interactive SQL</title>
+      <description>
+        <p>Welcome to Interactive SQL!</p>
+        <p>
+          Each lesson has some introductory text,
+          followed by a number of tasks for you to try.
+        </p>
+        <p>
+          Each task asks you to pull some data out of a database by writing a SQL query.
+          Once you've typed in the query and hit <strong>Run it</strong>, the <strong>Result</strong> column displays the
+          result of the query, and whether it's the right answer or not.
+          If you've got the right answer, then you can try another task.
+        </p>
+        <p>
+          If you feel like you've got the hang of the current lesson,
+          you can move onto the next lesson by hitting <strong>Next lesson</strong> at the bottom of the page.
+        </p>
+        <p>
+          Try completing one of the example tasks now.
+          Don't worry about how the queries work - we'll cover that in the next lesson.
+        </p>
+      </description>
+      <questions>
+        <question>
+          <description>
+            Try typing the following query into the <strong>Query</strong> box on the right, and then hit <strong>Run it</strong>:
+            <query query-name="example-1">SELECT manufacturer FROM cars</query>
+          </description>
+          <correct-query>
+            SELECT manufacturer FROM cars
+          </correct-query>
+        </question>
+
+        <question>
+          <description>
+            Looks like you made it through the first task successfully!
+            Let's see what happens if you type in a wrong answer.
+            Try typing the follow query into the <strong>Query</strong> box on the right,
+            and then hit <strong>Run it</strong>:
+            <query query-name="example-1">SELECT model FROM cars</query>
+          </description>
+        </question>
+      </questions>
+    </lesson>
+    -->
+    <lesson>
+      <slug>simple-selects</slug>
+      <title>Simple SELECTs</title>
+      <description>
+        <p>SELECTs are the simplest and most commonly used SQL statement. You use them to get data out of tables in your database.</p>
+        <p>Here's a simple example:</p>
+        <query query-name="select-manufacturer">SELECT manufacturer FROM cars</query>
+        <p>
+          This gets the manufacturer for each car in the <code>cars</code> table. You might expect an answer like this:
+        </p>
+
+        <query-results query-name="select-manufacturer" />
+        
+        <p>
+          You can <code>SELECT</code> more than one thing at a time:
+        </p>
+
+        <query query-name="select-manufacturer-and-model">SELECT manufacturer, model FROM cars</query>
+
+        <query-results query-name="select-manufacturer-and-model" />
+
+        <p>
+          So what's actually going on here? <code>cars</code> is a table full of data about cars, and
+          <code>manufacturer</code> and <code>model</code> are the names of two of its columns. <code>SELECT manufacturer, model FROM cars</code>
+          means "go and get the manufacturer and model for every car in the <code>cars</code> table".
+        </p>
+
+        <p>You can select as many columns as you like. Just separate each column name with a comma.</p>
+
+        <p>
+          To give you some practice at writing your own <code>SELECT</code> statements,
+          we've written some tasks for you to complete.
+          Each task asks you to pull some data out of a database by writing a SQL query.
+          Once you've typed in the query and hit <strong>Run it</strong>, the <strong>Result</strong> column displays the
+          result of the query, and whether it's the right answer or not.
+          If you've got the right answer, then you can try another task.
+        </p>
+        <p>
+          If you feel like you've got the hang of the current lesson,
+          you can move onto the next lesson by hitting <strong>Next lesson</strong> at the bottom of the page.
+        </p>
+      </description>
+      <questions>
+        
+        <question>
+          <description>
+            <p>Get the model of every car in the <code>cars</code> table.</p>
+            <p>The <code>cars</code> table has seven columns:</p>
+            <ul>
+              <li><code>id</code></li>
+              <li><code>manufacturer</code></li>
+              <li><code>model</code></li>
+              <li><code>licensePlate</code></li>
+              <li><code>color</code></li>
+              <li><code>mileage</code></li>
+              <li><code>brakeHorsepower</code></li>
+            </ul>
+          </description>
+          <correct-query>
+            SELECT model FROM cars
+          </correct-query>
+        </question>
+
+        <question>
+          <description>
+            <p>Use a single <code>SELECT</code> to get the license plate and color of every car in the <code>cars</code> table.</p>
+            <p>The <code>cars</code> table has seven columns:</p>
+            <ul>
+              <li><code>id</code></li>
+              <li><code>manufacturer</code></li>
+              <li><code>model</code></li>
+              <li><code>licensePlate</code></li>
+              <li><code>color</code></li>
+              <li><code>mileage</code></li>
+              <li><code>brakeHorsepower</code></li>
+            </ul>
+          </description>
+          <correct-query>
+            SELECT licensePlate, color FROM cars
+          </correct-query>
+        </question>
+
+        <question>
+          <description>
+            <p>Get the name of every car owner in the <code>owners</code> table.</p>
+            <p>The <code>owners</code> table has five columns:</p>
+            <ul>
+              <li><code>id</code></li>
+              <li><code>name</code></li>
+              <li><code>dateOfBirth</code></li>
+              <li><code>contactNumber</code></li>
+              <li><code>city</code></li>
+            </ul>
+          </description>
+          <correct-query>
+            SELECT name FROM owners
+          </correct-query>
+        </question>
+
+        <question>
+          <description>
+            <p>Use a single <code>SELECT</code> to get the ID, name, date of birth, contact number and city of every car owner in the <code>owners</code> table.</p>
+            <p>The <code>owners</code> table has five columns:</p>
+            <ul>
+              <li><code>id</code></li>
+              <li><code>name</code></li>
+              <li><code>dateOfBirth</code></li>
+              <li><code>contactNumber</code></li>
+              <li><code>city</code></li>
+            </ul>
+          </description>
+          <correct-query>
+            SELECT id, name, dateOfBirth, contactNumber, city FROM owners
+          </correct-query>
+        </question>
+        
+      </questions>
+    </lesson>
+    
+    
+    <lesson>
+      <slug>select-star</slug>
+      <title>SELECT *</title>
+      <description>
+        <p>As well as <code>SELECT</code>ing specific columns, you can <code>SELECT</code> every column using <code>SELECT *</code>:</p>
+        <query query-name="select-all-from-cars">SELECT * FROM cars</query>
+        <query-results query-name="select-all-from-cars" />
+        <p>
+          <code>SELECT *</code> is useful for finding out what columns are in a table, but it's usually better to specify which columns you want.
+          This gives you full control over the data you get back, and your application doesn't have to do unnecessary work.
+        </p>
+      </description>
+      <questions>
+        
+        <question>
+          <description>
+            <p>Use <code>SELECT *</code> to get all the data in the <code>owners</code> table.</p>
+          </description>
+          <correct-query>
+            SELECT * FROM owners
+          </correct-query>
+        </question>
+        
+      </questions>
+    </lesson>
+    
+    
+    <lesson>
+      <slug>where-clauses</slug>
+      <title>WHERE clauses</title>
+      <description>
+        <p>Simple <code>SELECT</code>s are great if you want to explore your database, or if you really do want to see every row. But what if you only want to find red Skodas, or Andy Jones? </p>
+        <p>We only have four rows, so it isn't a problem, but what if we had 4 million rows? You need a way to restrict the rows you <code>SELECT</code>.</p>
+        <p>This is what <code>WHERE</code> clauses are for. They come after your <code>SELECT</code> and specify extra information about the rows you want back.</p> 
+        <p>Here's an example:</p>
+        <query query-name="select-andy">SELECT  name, contactNumber FROM owners
+WHERE   name = 'Andy Jones'</query>
+        <query-results query-name="select-andy" />
+        <p>Our <code>SELECT</code> specifies which columns we want, and our <code>WHERE</code> clause specifies which rows we're interested in, i.e. any rows where the name is Andy Jones.</p>
+        <p>The <code>WHERE</code> clause has three parts:</p>
+        <ol>
+          <li>A left-hand value e.g. <code>name</code>.</li>
+          <li>An operator e.g. <code>=</code>. We'll cover more of these in the next lesson.</li>
+          <li>A right-hand value e.g. <code>'Andy Jones'</code>.</li>
+        </ol>
+        <p>These values can be all sorts of things, but for now our left-hand values will all be columns, and our right-hand values will be numbers or strings of letters.</p>
+        <p>Strings of letters need single quote marks around them e.g. <code>'Andy Jones'</code>. Numbers don't, e.g.</p>
+        <query query-name="select-id-4">SELECT  name, contactNumber FROM owners
+WHERE   id = 4</query>
+        <query-results query-name="select-id-4" />
+        <p>As you'll notice, the column in your <code>WHERE</code> clause doesn't have to appear in your <code>SELECT</code>.</p>
+      </description>
+      <questions>
+        
+        <question>
+          <description>
+            <p>Find out which city Alison Smith lives in.</p>
+            <p>The <code>owners</code> table has five columns:</p>
+            <ul>
+              <li><code>id</code></li>
+              <li><code>name</code></li>
+              <li><code>dateOfBirth</code></li>
+              <li><code>contactNumber</code></li>
+              <li><code>city</code></li>
+            </ul>
+          </description>
+          <correct-query>
+SELECT city FROM owners
+WHERE name = 'Alison Smith'
+          </correct-query>
+        </question>
+        
+        <question>
+          <description>
+            <p>Find the name and contact number of everybody that lives in Cambridge.</p>
+            <p>The <code>owners</code> table has five columns:</p>
+            <ul>
+              <li><code>id</code></li>
+              <li><code>name</code></li>
+              <li><code>dateOfBirth</code></li>
+              <li><code>contactNumber</code></li>
+              <li><code>city</code></li>
+            </ul>
+          </description>
+          <correct-query>
+SELECT name, contactNumber FROM owners
+WHERE city = 'Cambridge'
+          </correct-query>
+        </question>
+        
+        <question>
+          <description>
+            <p>Find out all the possible information on purple cars.</p>
+            <p>The <code>cars</code> table has seven columns:</p>
+            <ul>
+              <li><code>id</code></li>
+              <li><code>manufacturer</code></li>
+              <li><code>model</code></li>
+              <li><code>licensePlate</code></li>
+              <li><code>color</code></li>
+              <li><code>mileage</code></li>
+              <li><code>brakeHorsepower</code></li>
+            </ul>
+          </description>
+          <correct-query>
+SELECT * FROM cars
+WHERE color = 'purple'
+          </correct-query>
+        </question>
+        
+      </questions>
+    </lesson>
+    
+    
+    <lesson>
+      <slug>more-operators-for-where-clauses</slug>
+      <title>More operators for WHERE clauses</title>
+      <description>
+        <p>In the last lesson, we used <code>WHERE</code> clauses to look for specific values with the "equals" operator, <code>=</code>.</p>
+        <p>You can also use <code>WHERE</code> clauses to exclude specific values, with the "not equal" operator, <code>!=</code>.</p>
+        <query query-name="select-not-cambridge">
+SELECT name, contactNumber FROM owners
+WHERE city != 'Cambridge'</query>
+        <query-results query-name="select-not-cambridge" />
+        <p>Here are four more operators:</p>
+        <ul>
+          <li><code>&gt;</code> <strong>Greater than</strong>: find rows where the left-hand value is greater than (but not equal to) the right-hand value</li>
+          <li><code>&gt;=</code> <strong>Greater than or equal to</strong>: the left-hand value is greater than <em>or</em> equal to the right-hand value</li>
+          <li><code>&lt;</code> <strong>Less than</strong>: the left-hand value is less than (but not equal to) the right-hand value</li>
+          <li><code>&lt;=</code> <strong>Less than or equal to</strong>: find rows where the left-hand value is less than or equal to the right-hand value</li>
+        </ul>
+        <p>Here's an example:</p>
+        <query query-name="select-mileage-gt-1000">SELECT licensePlate, mileage FROM cars
+WHERE mileage > 10000</query>
+        <query-results query-name="select-mileage-gt-1000" />
+      </description>
+      <questions>
+        
+        <question>
+          <description>
+            <p>Find the manufacturer and model of each car with less than 146 brake horsepower.</p>
+            <p>The <code>cars</code> table has seven columns:</p>
+            <ul>
+              <li><code>id</code></li>
+              <li><code>manufacturer</code></li>
+              <li><code>model</code></li>
+              <li><code>licensePlate</code></li>
+              <li><code>color</code></li>
+              <li><code>mileage</code></li>
+              <li><code>brakeHorsepower</code></li>
+            </ul>
+          </description>
+          <correct-query>
+SELECT manufacturer, model FROM cars
+WHERE brakeHorsepower &lt; 146
+          </correct-query>
+        </question>
+        
+        <question>
+          <description>
+            <p>Find the license plates of all the cars with at least 700 mileage.</p>
+            <p>The <code>cars</code> table has seven columns:</p>
+            <ul>
+              <li><code>id</code></li>
+              <li><code>manufacturer</code></li>
+              <li><code>model</code></li>
+              <li><code>licensePlate</code></li>
+              <li><code>color</code></li>
+              <li><code>mileage</code></li>
+              <li><code>brakeHorsepower</code></li>
+            </ul>
+          </description>
+          <correct-query>
+SELECT licensePlate FROM cars
+WHERE mileage &gt;= 700
+          </correct-query>
+        </question>
+        
+      </questions>
+    </lesson>
+
+
+    <lesson>
+      <slug>combining-where-clauses</slug>
+      <title>Combining WHERE clauses</title>
+      <description>
+        <p>
+          So far, we've used a single condition in all of our <code>WHERE</code>
+          clauses. But sometimes we would like more than one condition. For instance,
+          we might want to find all red Skodas. We can do this by using the <code>AND</code>
+          operator to combine two conditions:
+        </p>
+
+        <query query-name="red-skodas">
+SELECT licensePlate, color, manufacturer FROM cars
+WHERE color = 'red' AND manufacturer = 'Skoda'</query>
+        <query-results query-name="red-skodas" />
+        
+        <p>
+          We can also use the <code>OR</code> operator to find rows that satisfy
+          at least one condition. For instance, to find cars that are red or green:
+        </p>
+
+        <query query-name="red-or-green-cars">
+SELECT licensePlate, color FROM cars
+WHERE color = 'red' OR color = 'green'</query>
+        <query-results query-name="red-or-green-cars" />
+        
+      </description>
+      <questions>
+
+        <question>
+          <description>
+            <p>Find the license plate and mileage of cars with a mileage greater than 1000 and less than 100000</p>
+            <p>
+              The <code>cars</code> table has seven columns:
+            </p>
+            <ul>
+              <li><code>id</code></li>
+              <li><code>manufacturer</code></li>
+              <li><code>model</code></li>
+              <li><code>licensePlate</code></li>
+              <li><code>color</code></li>
+              <li><code>mileage</code></li>
+              <li><code>brakeHorsepower</code></li>
+            </ul>
+          </description>
+          <correct-query>
+SELECT licensePlate, mileage FROM cars
+WHERE mileage &gt; 1000 AND mileage &lt; 100000
+          </correct-query>
+        </question>
+
+      </questions>
+    </lesson>
+
+
+    <lesson>
+      <slug>sorting-results-using-order-by</slug>
+      <title>Sorting results using ORDER BY</title>
+      <description>
+        <p>
+          In some cases, we'd like to display our data in a particular order.
+          The <code>ORDER BY</code> clause lets us pick a column that's used
+          to sort the results.
+          For instance, we might want to display the names and dates of birth
+          of all owners from the earliest date of birth to the latest:
+        </p>
+
+        <query query-name="alphabetical-owners">
+SELECT name, dateOfBirth FROM owners
+ORDER BY dateOfBirth</query>
+        <query-results query-name="alphabetical-owners" />
+
+        <p>
+          If we add <code>DESC</code> after the name of the column, we can
+          sort in reverse order.
+          For instance, to display the names and dates of birth of all owners from
+          the latest date of birth to the earliest:
+        </p>
+
+        <query query-name="reverse-alphabetical-owners">
+SELECT name, dateOfBirth FROM owners
+ORDER BY dateOfBirth DESC</query>
+        <query-results query-name="reverse-alphabetical-owners" />
+        
+      </description>
+      <questions>
+
+        <question>
+          <description>
+            <p>Find the license plate and mileage of all cars ordered by mileage</p>
+            <p>
+              The <code>cars</code> table has seven columns:
+            </p>
+            <ul>
+              <li><code>id</code></li>
+              <li><code>manufacturer</code></li>
+              <li><code>model</code></li>
+              <li><code>licensePlate</code></li>
+              <li><code>color</code></li>
+              <li><code>mileage</code></li>
+              <li><code>brakeHorsepower</code></li>
+            </ul>
+          </description>
+          <correct-query>
+SELECT licensePlate, mileage FROM cars
+ORDER BY mileage
+          </correct-query>
+        </question>
+
+      </questions>
+    </lesson>
+    
+  </lessons>
+</course>
