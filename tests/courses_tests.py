@@ -7,7 +7,7 @@ from learnsomesql.courses import CourseReader
 
 
 @istest
-def creation_sql_is_empty_if_element_no_present():
+def creation_sql_is_empty_if_element_not_present():
     xml = """<?xml version="1.0" encoding="utf-8" ?>
         <course></course>"""
     
@@ -53,6 +53,36 @@ def dialect_elements_are_included_if_dialects_match():
     
     course = _read_xml(xml, dialect="sqlite3")
     assert_equal(["create table hats (name);"], course.creation_sql)
+
+
+@istest
+def lessons_sql_is_empty_if_element_not_present():
+    xml = """<?xml version="1.0" encoding="utf-8" ?>
+        <course></course>"""
+    
+    course = _read_xml(xml)
+    assert_equal([], course.lessons)
+
+
+@istest
+def lesson_has_slug_and_title_and_description():
+    xml = """<?xml version="1.0" encoding="utf-8" ?>
+        <course>
+            <lessons>
+                <lesson>
+                    <slug>simple-selects</slug>
+                    <title>Simple SELECTs</title>
+                    <description>SELECTs are the simplest SQL statement.</description>
+                </lesson>
+            </lessons>
+        </course>"""
+    
+    course = _read_xml(xml)
+    assert_equal(1, len(course.lessons))
+    lesson = course.lessons[0]
+    assert_equal("simple-selects", lesson.slug)
+    assert_equal("Simple SELECTs", lesson.title)
+    assert_equal("SELECTs are the simplest SQL statement.", lesson.description)
 
 
 def _read_xml(xml, dialect="sqlite3"):

@@ -12,7 +12,8 @@ class CourseReader():
         document = filter_xml(minidom.parse(f), dialect)
         course_element = document.documentElement
         creation_sql = self._read_creation_sql(course_element)
-        return Course(creation_sql, [])
+        lessons = self._read_lessons(course_element)
+        return Course(creation_sql, lessons)
         
     def _read_creation_sql(self, course_element):
         creation_sql_element = self._find(course_element, "creation-sql")
@@ -23,6 +24,30 @@ class CourseReader():
                 command
                 for command in re.split(r"\s*\n\s*\n\s*", self._text(creation_sql_element).strip())
             ]
+            
+    def _read_lessons(self, course_element):
+        lessons_element = self._find(course_element, "lessons")
+        if lessons_element is None:
+            return []
+        else:
+            return [
+                self._read_lesson_element(element)
+                for element in lessons_element.childNodes
+                if element.nodeType == element.ELEMENT_NODE and element.tagName == "lesson"
+            ]
+            
+    def _read_lesson_element(self, lesson_element):
+        slug = self._text(self._find(lesson_element, "slug"))
+        title = self._text(self._find(lesson_element, "title"))
+        description = self._text(self._find(lesson_element, "description"))
+        questions = []
+        return Lesson(
+            slug=slug,
+            title=title,
+            description=description,
+            questions=questions,
+        )
+        
 
     def _find(self, node, name):
         for child in node.childNodes:
