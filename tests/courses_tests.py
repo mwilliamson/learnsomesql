@@ -87,6 +87,40 @@ def lesson_has_slug_and_title_and_description():
 
 
 @istest
+def queries_in_lesson_descriptions_are_executed():
+    xml = """<?xml version="1.0" encoding="utf-8" ?>
+        <course>
+            <creation-sql>
+                create table hats (name);
+            
+                insert into hats (name) values ("Fedora");
+            </creation-sql>
+            <lessons>
+                <lesson>
+                    <description>
+                        <query query-name="select-hat-names">SELECT name FROM hats</query>
+                        <p>
+                          This gets the name of every hat
+                        </p>
+
+                        <query-results query-name="select-hat-names" />
+                    </description>
+                </lesson>
+            </lessons>
+        </course>"""
+    
+    course = _read_xml(xml)
+    lesson = course.lessons[0]
+    expected_description = """<pre>SELECT name FROM hats</pre>
+                        <p>
+                          This gets the name of every hat
+                        </p>
+
+                        <table class="table table-bordered"><tr><th>name</th></tr><tr><td>Fedora</td></tr></table>"""
+    assert_equal(expected_description, lesson.description)
+
+
+@istest
 def question_has_description_and_trimmed_correct_query():
     xml = """<?xml version="1.0" encoding="utf-8" ?>
         <course>

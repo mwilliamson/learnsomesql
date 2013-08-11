@@ -12,7 +12,7 @@ class CourseReader(object):
         document = filter_xml(minidom.parse(f), dialect)
         course_element = document.documentElement
         creation_sql = self._read_creation_sql(course_element)
-        lessons_reader = LessonsReader(self._executor, creation_sql)
+        lessons_reader = LessonsReader(self._executor, creation_sql, document)
         lessons = lessons_reader.read_lessons(course_element)
         return Course(creation_sql, lessons)
 
@@ -28,9 +28,10 @@ class CourseReader(object):
 
 
 class LessonsReader(object):
-    def __init__(self, executor, creation_sql):
+    def __init__(self, executor, creation_sql, document):
         self._executor = executor
         self._creation_sql = creation_sql
+        self._document = document
         
     def read_lessons(self, course_element):
         lessons_element = _find(course_element, "lessons")
@@ -42,7 +43,7 @@ class LessonsReader(object):
     def _read_lesson_element(self, lesson_element):
         slug = _text(_find(lesson_element, "slug"))
         title = _text(_find(lesson_element, "title"))
-        description = _inner_xml(_find(lesson_element, "description"))
+        description = self._read_lesson_description(_find(lesson_element, "description"))
         
         questions_element = _find(lesson_element, "questions")
         questions = map(
@@ -56,7 +57,53 @@ class LessonsReader(object):
             description=description,
             questions=questions,
         )
+    
+    def _read_lesson_description(self, element):
+        query_elements = _find_elements(element, "query")
         
+        queries = dict(
+            (query_element.getAttribute("query-name"), _text(query_element))
+            for query_element
+            in query_elements
+        )
+        
+        for query_element in query_elements:
+            query_element.tagName = "pre"
+            query_element.removeAttribute("query-name")
+            
+        for results_element in _find_elements(element, "query-results"):
+            query_name = results_element.getAttribute("query-name")
+            query = queries[query_name]
+            results = self._execute(query).table
+            
+            results_element.appendChild(self._generate_headings_row(results.column_names))
+            for row_element in self._generate_data_rows(results.rows):
+                results_element.appendChild(row_element)
+            results_element.tagName = "table"
+            results_element.setAttribute("class", "table table-bordered")
+            results_element.removeAttribute("query-name")
+            
+        return _inner_xml(element)
+    
+    def _generate_headings_row(self, column_names):
+        row = self._document.createElement("tr")
+        for name in column_names:
+            heading = self._document.createElement("th")
+            heading.appendChild(self._document.createTextNode(name))
+            row.appendChild(heading)
+        return row
+    
+    def _generate_data_rows(self, rows):
+        return map(self._generate_data_row, rows)
+        
+    def _generate_data_row(self, row):
+        row_element = self._document.createElement("tr")
+        for value in row:
+            cell = self._document.createElement("td")
+            cell.appendChild(self._document.createTextNode(unicode(value)))
+            row_element.appendChild(cell)
+        return row_element
+    
     def _read_question_element(self, question_element):
         description = _inner_xml(_find(question_element, "description"))
         correct_query = _text(_find(question_element, "correct-query")).strip()
