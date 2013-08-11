@@ -1,6 +1,7 @@
 from StringIO import StringIO
 
 import sqlexecutor
+from sqlexecutor.results import ResultTable
 from nose.tools import istest, assert_equal
 
 from learnsomesql.courses import CourseReader
@@ -111,6 +112,36 @@ def question_has_description_and_correct_query():
     question = questions[0]
     assert_equal("<p>Get all the hats.</p>", question.description)
     assert_equal("SELECT * FROM hats", question.correct_query)
+
+
+@istest
+def question_expected_result_is_result_of_executing_correct_query():
+    xml = """<?xml version="1.0" encoding="utf-8" ?>
+        <course>
+            <creation-sql>
+                create table hats (name);
+            
+                insert into hats (name) values ("Fedora");
+            </creation-sql>
+            <lessons>
+                <lesson>
+                    <questions>
+                        <question>
+                            <description>
+                                <p>Get all the hats.</p>
+                            </description>
+                            <correct-query>SELECT * FROM hats</correct-query>
+                        </question>
+                    </questions>
+                </lesson>
+            </lessons>
+        </course>"""
+    
+    course = _read_xml(xml)
+    
+    question = course.lessons[0].questions[0]
+    assert_equal(["name"], question.expected_results.column_names)
+    assert_equal([["Fedora"]], question.expected_results.rows)
 
 
 def _read_xml(xml, dialect="sqlite3"):

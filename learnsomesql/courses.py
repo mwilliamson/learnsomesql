@@ -60,12 +60,16 @@ class LessonsReader(object):
     def _read_question_element(self, question_element):
         description = _inner_xml(_find(question_element, "description"))
         correct_query = _text(_find(question_element, "correct-query"))
+        expected_results = self._execute(correct_query).table
         
         return Question(
             description=description,
             correct_query=correct_query,
-            expected_results=None,
+            expected_results=expected_results,
         )
+        
+    def _execute(self, sql):
+        return self._executor.execute(self._creation_sql, sql)
         
 
 def _find(node, name):
