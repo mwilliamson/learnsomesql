@@ -6,11 +6,11 @@ import flask
 import sqlexecutor
 from sqlexecutor.results import ResultTable
 
-from .courses import Course, Lesson, Question
+from learnsomesql.courses import CourseReader
 
 
 @contextlib.contextmanager
-def create_app(course):
+def create_app(course, dialect):
     lessons = course.lessons
     
     app = flask.Flask(
@@ -64,7 +64,7 @@ def create_app(course):
     def question_to_json(question):
         return {
             "description": question.description,
-            "correctAnswer": question.correct_answer,
+            "correctAnswer": question.correct_query,
             "expectedResults": {
                 "columnNames": question.expected_results.column_names,
                 "rows": question.expected_results.rows
@@ -91,9 +91,9 @@ def create_app(course):
         
         return flask.jsonify(response)
     
-    sqlexecutor.prepare("sqlite3", None)
+    sqlexecutor.prepare(dialect, None)
     
-    executor = sqlexecutor.executor("sqlite3", None)
+    executor = sqlexecutor.executor(dialect, None)
     try:
         yield app
     finally:
@@ -113,46 +113,16 @@ def _package_path(path):
 
 
 if __name__ == "__main__":
-    creation_sql = [
-     """CREATE TABLE cars (
-      id int primary key,
-      licensePlate text UNIQUE NOT NULL,
-      manufacturer text NOT NULL,
-      model text NOT NULL,
-      color text NOT NULL,
-      mileage int NOT NULL,
-      brakeHorsepower int NOT NULL
-    )""",
+    dialect = "sqlite3"
     
-    "INSERT INTO cars (licensePlate, manufacturer, model, color, mileage, brakeHorsepower) VALUES ('X461 TOM', 'Skoda', 'Fabia', 'red', 64000, 129)",
+    sqlexecutor.prepare(dialect, None)
+    executor = sqlexecutor.executor(dialect, None)
     
-    "INSERT INTO cars (licensePlate, manufacturer, model, color, mileage, brakeHorsepower) VALUES ('FA10 ASM', 'Volkswagen', 'Fox', 'green', 15000, 135)",
-    ]
+    course_reader = CourseReader(executor)
+    this_dir = os.path.dirname(__file__)
+    course_path = os.path.join(this_dir, "../courses/sql-select-course.xml")
+    course = course_reader.read_file(course_path, dialect)
     
-    questions = [
-        Question(
-            description="<p>Get the model of every car in the <code>cars</code> table.</p>",
-            correct_query="SELECT model FROM cars",
-            expected_results=ResultTable(
-                ["model"],
-                [["Fabia"], ["Fox"]],
-            ),
-        ),
-        Question(
-            description="<p>Get the color of every car.</p>",
-            correct_query="SELECT color FROM cars",
-            expected_results=ResultTable(
-                ["color"],
-                [["red"], ["green"]],
-            ),
-        ),
-    ]
-    
-    sample_lessons = [
-        Lesson("simple-selects", "Simple SELECTs", "<p>SELECTs are simple</p>", questions),
-        Lesson("select-star", "SELECT *", "<p>Don't use SELECT * in code</p>", questions),
-    ]
-    sample_course = Course(creation_sql, sample_lessons)
-    with create_app(sample_course) as app:
+    with create_app(course, dialect) as app:
         app.run(debug=True)
 

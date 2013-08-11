@@ -3,7 +3,8 @@ import contextlib
 
 from nose.tools import istest, assert_equal, assert_in, assert_not_in
 
-from learnsomesql.app import create_app, Course, Lesson
+from learnsomesql.app import create_app
+from learnsomesql.courses import Course, Lesson
 
 
 
@@ -76,6 +77,6 @@ def _create_client():
         Lesson("where-clauses", "WHERE clauses", "<p>This is a WHERE clause</p>", []),
     ]
     course = Course(creation_sql, lessons)
-    with create_app(course) as app:
+    with create_app(course, "sqlite3") as app:
         yield app.test_client()
     
