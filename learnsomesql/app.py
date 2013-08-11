@@ -132,7 +132,7 @@ if __name__ == "__main__":
     questions = [
         Question(
             description="<p>Get the model of every car in the <code>cars</code> table.</p>",
-            correct_answer="SELECT model FROM cars",
+            correct_query="SELECT model FROM cars",
             expected_results=ResultTable(
                 ["model"],
                 [["Fabia"], ["Fox"]],
@@ -140,7 +140,7 @@ if __name__ == "__main__":
         ),
         Question(
             description="<p>Get the color of every car.</p>",
-            correct_answer="SELECT color FROM cars",
+            correct_query="SELECT color FROM cars",
             expected_results=ResultTable(
                 ["color"],
                 [["red"], ["green"]],

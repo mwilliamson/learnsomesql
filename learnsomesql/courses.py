@@ -27,25 +27,37 @@ class CourseReader():
             
     def _read_lessons(self, course_element):
         lessons_element = self._find(course_element, "lessons")
-        if lessons_element is None:
-            return []
-        else:
-            return [
-                self._read_lesson_element(element)
-                for element in lessons_element.childNodes
-                if element.nodeType == element.ELEMENT_NODE and element.tagName == "lesson"
-            ]
+        return map(
+            self._read_lesson_element,
+            self._find_elements(lessons_element, "lesson"),
+        )
             
     def _read_lesson_element(self, lesson_element):
         slug = self._text(self._find(lesson_element, "slug"))
         title = self._text(self._find(lesson_element, "title"))
         description = self._text(self._find(lesson_element, "description"))
-        questions = []
+        
+        questions_element = self._find(lesson_element, "questions")
+        questions = map(
+            self._read_question_element,
+            self._find_elements(questions_element, "question"),
+        )
+        
         return Lesson(
             slug=slug,
             title=title,
             description=description,
             questions=questions,
+        )
+        
+    def _read_question_element(self, question_element):
+        description = self._inner_xml(self._find(question_element, "description"))
+        correct_query = self._text(self._find(question_element, "correct-query"))
+        
+        return Question(
+            description=description,
+            correct_query=correct_query,
+            expected_results=None,
         )
         
 
@@ -54,11 +66,28 @@ class CourseReader():
             if child.nodeType == child.ELEMENT_NODE and child.tagName == name:
                 return child
                 
+    def _find_elements(self, node, name):
+        if node is None:
+            return []
+            
+        def _is_element(node):
+            return node.nodeType == node.ELEMENT_NODE and node.tagName == name
+        
+        return filter(_is_element, node.childNodes)
+
     def _text(self, node):
-        if node.nodeType == node.TEXT_NODE:
+        if node is None:
+            return ""
+        elif node.nodeType == node.TEXT_NODE:
             return node.nodeValue
         else:
             return "".join(map(self._text, node.childNodes))
+            
+    def _inner_xml(self, node):
+        if node is None:
+            return ""
+        else:
+            return "".join(child.toxml() for child in node.childNodes).strip()
 
 
 class Course(object):
@@ -76,7 +105,7 @@ class Lesson(object):
 
 
 class Question(object):
-    def __init__(self, description, correct_answer, expected_results):
+    def __init__(self, description, correct_query, expected_results):
         self.description = description
-        self.correct_answer = correct_answer
+        self.correct_query = correct_query
         self.expected_results = expected_results

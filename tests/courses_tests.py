@@ -85,6 +85,34 @@ def lesson_has_slug_and_title_and_description():
     assert_equal("SELECTs are the simplest SQL statement.", lesson.description)
 
 
+@istest
+def question_has_description_and_correct_query():
+    xml = """<?xml version="1.0" encoding="utf-8" ?>
+        <course>
+            <lessons>
+                <lesson>
+                    <questions>
+                        <question>
+                            <description>
+                                <p>Get all the hats.</p>
+                            </description>
+                            <correct-query>SELECT * FROM hats</correct-query>
+                        </question>
+                    </questions>
+                </lesson>
+            </lessons>
+        </course>"""
+    
+    course = _read_xml(xml)
+    
+    questions = course.lessons[0].questions
+    assert_equal(1, len(questions))
+    
+    question = questions[0]
+    assert_equal("<p>Get all the hats.</p>", question.description)
+    assert_equal("SELECT * FROM hats", question.correct_query)
+
+
 def _read_xml(xml, dialect="sqlite3"):
     sqlexecutor.prepare("sqlite3", None)
     executor = sqlexecutor.executor("sqlite3", None)
