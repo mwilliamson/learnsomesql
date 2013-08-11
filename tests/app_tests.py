@@ -69,10 +69,11 @@ def _create_client():
         "create table hats (name);",
         "insert into hats (name) values ('Fedora');",
     ]
+    
     lessons = [
-        Lesson("simple-selects", "Simple SELECTs", "<p>SELECTs are simple</p>"),
-        Lesson("select-star", "SELECT *", "<p>Don't use SELECT * in code</p>"),
-        Lesson("where-clauses", "WHERE clauses", "<p>This is a WHERE clause</p>"),
+        Lesson("simple-selects", "Simple SELECTs", "<p>SELECTs are simple</p>", []),
+        Lesson("select-star", "SELECT *", "<p>Don't use SELECT * in code</p>", []),
+        Lesson("where-clauses", "WHERE clauses", "<p>This is a WHERE clause</p>", []),
     ]
     course = Course(creation_sql, lessons)
     with create_app(course) as app:
