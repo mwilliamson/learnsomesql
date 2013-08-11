@@ -6,6 +6,8 @@ import flask
 import sqlexecutor
 from sqlexecutor.results import ResultTable
 
+from .courses import Course, Lesson, Question
+
 
 @contextlib.contextmanager
 def create_app(course):
@@ -96,27 +98,6 @@ def create_app(course):
         yield app
     finally:
         executor.close()
-
-
-class Course(object):
-    def __init__(self, creation_sql, lessons):
-        self.creation_sql = creation_sql
-        self.lessons = lessons
-
-
-class Lesson(object):
-    def __init__(self, slug, title, description, questions):
-        self.slug = slug
-        self.title = title
-        self.description = description
-        self.questions = questions
-
-
-class Question(object):
-    def __init__(self, description, correct_answer, expected_results):
-        self.description = description
-        self.correct_answer = correct_answer
-        self.expected_results = expected_results
 
 
 class LessonViewModel(object):
