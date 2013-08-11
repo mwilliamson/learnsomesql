@@ -87,7 +87,7 @@ def lesson_has_slug_and_title_and_description():
 
 
 @istest
-def question_has_description_and_correct_query():
+def question_has_description_and_trimmed_correct_query():
     xml = """<?xml version="1.0" encoding="utf-8" ?>
         <course>
             <lessons>
@@ -97,7 +97,9 @@ def question_has_description_and_correct_query():
                             <description>
                                 <p>Get all the hats.</p>
                             </description>
-                            <correct-query>SELECT * FROM hats</correct-query>
+                            <correct-query>
+                                SELECT * FROM hats
+                            </correct-query>
                         </question>
                     </questions>
                 </lesson>

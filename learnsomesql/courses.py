@@ -59,7 +59,7 @@ class LessonsReader(object):
         
     def _read_question_element(self, question_element):
         description = _inner_xml(_find(question_element, "description"))
-        correct_query = _text(_find(question_element, "correct-query"))
+        correct_query = _text(_find(question_element, "correct-query")).strip()
         expected_results = self._execute(correct_query).table
         
         return Question(
