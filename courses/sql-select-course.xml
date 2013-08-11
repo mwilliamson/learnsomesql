@@ -3,7 +3,7 @@
   <creation-sql>
     <dialect name="sqlite3">
       CREATE TABLE cars (
-        id int primary key,
+        id integer primary key,
         licensePlate text UNIQUE NOT NULL,
         manufacturer text NOT NULL,
         model text NOT NULL,
@@ -34,7 +34,7 @@
     
     <dialect name="sqlite3">
       CREATE TABLE owners (
-        id int primary key,
+        id integer primary key,
         name text NOT NULL,
         dateOfBirth text NOT NULL,
         contactNumber text NOT NULL,
